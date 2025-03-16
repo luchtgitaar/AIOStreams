@@ -157,7 +157,7 @@ export class BaseWrapper {
     );
 
     let response = useProxy
-      ? uFetch(url, {
+      ? Fetch(url, {
           dispatcher: new ProxyAgent(Settings.ADDON_PROXY),
           method: 'GET',
           headers: headers,
