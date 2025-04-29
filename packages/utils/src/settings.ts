@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import path from 'path';
+import p from '../package.json';
 
 try {
   dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
@@ -23,10 +24,11 @@ export class Settings {
     ? process.env.DETERMINISTIC_ADDON_ID === 'true'
     : false;
   public static readonly API_KEY = process.env.API_KEY ?? '';
-  public static readonly TMDB_API_KEY = process.env.TMDB_API_KEY || '';
   public static readonly SHOW_DIE = process.env.SHOW_DIE
     ? process.env.SHOW_DIE === 'true'
     : false;
+  public static readonly ADDON_REQUEST_USER_AGENT =
+    process.env.ADDON_REQUEST_USER_AGENT ?? `AIOStreams/${p.version}`;
   public static readonly LOG_SENSITIVE_INFO = process.env.LOG_SENSITIVE_INFO
     ? process.env.LOG_SENSITIVE_INFO === 'true'
     : false;
@@ -46,6 +48,12 @@ export class Settings {
       ? 'json'
       : 'text'
     : 'text';
+
+  // Stremio Addon Site
+  public static readonly STREMIO_ADDONS_CONFIG_ISSUER =
+    process.env.STREMIO_ADDONS_AUTH_ISSUER || 'https://stremio-addons.net';
+  public static readonly STREMIO_ADDONS_CONFIG_SIGNATURE =
+    process.env.STREMIO_ADDONS_CONFIG_SIGNATURE || null;
 
   // Cache settings
   public static readonly CACHE_STREAM_RESULTS = process.env.CACHE_STREAM_RESULTS
@@ -111,15 +119,12 @@ export class Settings {
   public static readonly COMET_INDEXERS = process.env.COMET_INDEXERS
     ? JSON.parse(process.env.COMET_INDEXERS)
     : ['dmm_public_hash_shares_only'];
-  public static readonly FORCE_COMET_HOSTNAME = process.env.FORCE_COMET_HOSTNAME
-    ? process.env.FORCE_COMET_HOSTNAME
-    : null;
-  public static readonly FORCE_COMET_PORT = process.env.FORCE_COMET_PORT
-    ? process.env.FORCE_COMET_PORT
-    : null;
-  public static readonly FORCE_COMET_PROTOCOL = process.env.FORCE_COMET_PROTOCOL
-    ? process.env.FORCE_COMET_PROTOCOL
-    : null;
+  public static readonly FORCE_COMET_HOSTNAME =
+    process.env.FORCE_COMET_HOSTNAME ?? null;
+  public static readonly FORCE_COMET_PORT =
+    process.env.FORCE_COMET_PORT ?? null;
+  public static readonly FORCE_COMET_PROTOCOL =
+    process.env.FORCE_COMET_PROTOCOL ?? null;
   public static readonly DEFAULT_COMET_TIMEOUT = process.env
     .DEFAULT_COMET_TIMEOUT
     ? parseInt(process.env.DEFAULT_COMET_TIMEOUT)
@@ -142,23 +147,36 @@ export class Settings {
   // Jackettio settings
   public static readonly JACKETTIO_URL =
     process.env.JACKETTIO_URL || 'https://jackettio.elfhosted.com/';
-  public static readonly JACKETT_INDEXERS = process.env.JACKETT_INDEXERS
-    ? JSON.parse(process.env.JACKETT_INDEXERS)
-    : ['bitsearch', 'eztv', 'thepiratebay', 'therarbg', 'yts'];
+  public static readonly DEFAULT_JACKETTIO_INDEXERS =
+    process.env.DEFAULT_JACKETTIO_INDEXERS || process.env.JACKETT_INDEXERS
+      ? JSON.parse(
+          process.env.DEFAULT_JACKETTIO_INDEXERS ||
+            process.env.JACKETT_INDEXERS!
+        )
+      : ['eztv', 'thepiratebay', 'therarbg', 'yts'];
+  public static readonly DEFAULT_JACKETTIO_STREMTHRU_URL =
+    process.env.DEFAULT_JACKETTIO_STREMTHRU_URL ||
+    'https://stremthru.13377001.xyz';
   public static readonly DEFAULT_JACKETTIO_TIMEOUT = process.env
     .DEFAULT_JACKETTIO_TIMEOUT
     ? parseInt(process.env.DEFAULT_JACKETTIO_TIMEOUT)
     : undefined;
+  public static readonly FORCE_JACKETTIO_HOSTNAME =
+    process.env.FORCE_JACKETTIO_HOSTNAME ?? null;
+  public static readonly FORCE_JACKETTIO_PORT =
+    process.env.FORCE_JACKETTIO_PORT ?? null;
+  public static readonly FORCE_JACKETTIO_PROTOCOL =
+    process.env.FORCE_JACKETTIO_PROTOCOL ?? null;
 
   // Stremio Jackett settings
   public static readonly STREMIO_JACKETT_URL =
     process.env.STREMIO_JACKETT_URL || 'https://stremio-jackett.elfhosted.com/';
-  public static readonly JACKETT_URL = process.env.JACKETT_URL || null;
-  public static readonly JACKETT_API_KEY = process.env.JACKETT_API_KEY || null;
-  public static readonly STREMIO_JACKETT_CACHE_ENABLED = process.env
-    .STREMIO_JACKETT_CACHE_ENABLED
-    ? process.env.STREMIO_JACKETT_CACHE_ENABLED !== 'false'
-    : true;
+  public static readonly DEFAULT_STREMIO_JACKETT_JACKETT_URL =
+    process.env.DEFAULT_STREMIO_JACKETT_JACKETT_URL || null;
+  public static readonly DEFAULT_STREMIO_JACKETT_JACKETT_API_KEY =
+    process.env.DEFAULT_STREMIO_JACKETT_JACKETT_API_KEY || null;
+  public static readonly DEFAULT_STREMIO_JACKETT_TMDB_API_KEY =
+    process.env.DEFAULT_STREMIO_JACKETT_TMDB_API_KEY || null;
   public static readonly DEFAULT_STREMIO_JACKETT_TIMEOUT = process.env
     .DEFAULT_STREMIO_JACKETT_TIMEOUT
     ? parseInt(process.env.DEFAULT_STREMIO_JACKETT_TIMEOUT)
@@ -210,11 +228,27 @@ export class Settings {
     ? parseInt(process.env.DEFAULT_EASYNEWS_PLUS_TIMEMOUT)
     : undefined;
 
+  public static readonly EASYNEWS_PLUS_PLUS_URL =
+    process.env.EASYNEWS_PLUS_PLUS_URL ||
+    'https://easynews-cloudflare-worker.jqrw92fchz.workers.dev/';
+  public static readonly DEFAULT_EASYNEWS_PLUS_PLUS_TIMEMOUT = process.env
+    .DEFAULT_EASYNEWS_PLUS_PLUS_TIMEMOUT
+    ? parseInt(process.env.DEFAULT_EASYNEWS_PLUS_PLUS_TIMEMOUT)
+    : undefined;
+
   public static readonly DEBRIDIO_URL =
     process.env.DEBRIDIO_URL || 'https://debridio.adobotec.com/';
   public static readonly DEFAULT_DEBRIDIO_TIMEOUT = process.env
     .DEFAULT_DEBRIDIO_TIMEOUT
     ? parseInt(process.env.DEFAULT_DEBRIDIO_TIMEOUT)
+    : undefined;
+
+  public static readonly STREMTHRU_STORE_URL =
+    process.env.STREMTHRU_STORE_URL ||
+    'https://stremthru.elfhosted.com/stremio/store/';
+  public static readonly DEFAULT_STREMTHRU_STORE_TIMEOUT = process.env
+    .DEFAULT_STREMTHRU_STORE_TIMEOUT
+    ? parseInt(process.env.DEFAULT_STREMTHRU_STORE_TIMEOUT)
     : undefined;
 
   public static readonly DEFAULT_DMM_CAST_TIMEOUT = process.env
